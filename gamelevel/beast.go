@@ -17,6 +17,7 @@ type Beast struct {
 	cell tl.Cell
 	prevX, prevY int
 	lastMillis, speed int64
+	blocked bool
 }
 
 func NewBeast(x, y int, color tl.Attr, runes []rune, speed int64) (*Beast) {
@@ -24,7 +25,8 @@ func NewBeast(x, y int, color tl.Attr, runes []rune, speed int64) (*Beast) {
 		runes,
 		tl.Cell{color, tl.ColorBlack, runes[0]},
 		x, y,
-		0, speed}
+		0, speed,
+		false}
 }
 
 func (beast *Beast) Animate() {
@@ -37,32 +39,56 @@ func (beast *Beast) Animate() {
 }
 
 func (beast *Beast) Move() {
-	millis := time.Now().UnixNano() / 1000000
-	if millis - beast.lastMillis <= beast.speed {
-		return
+	if !beast.blocked {
+		// if wasn't blocked last, time limit on the creature's speed
+		millis := time.Now().UnixNano() / 1000000
+		if millis - beast.lastMillis <= beast.speed {
+			return
+		}
+		beast.lastMillis = millis
 	}
 
-	beast.lastMillis = millis
+	// aim for the player
 	toX := TheGameState.Player.prevX
 	toY := TheGameState.Player.prevY
 	beast.prevX, beast.prevY = beast.Position()
 	x := beast.prevX
 	y := beast.prevY
+
+	dx := 0
+	dy := 0
 	if x < toX {
-		x++
+		dx = 1
 	} else if x > toX {
-		x--
+		dx = -1
 	}
 	if y < toY {
-		y++
+		dy = 1
 	} else if y > toY {
-		y--
+		dy = -1
+	}
+
+	if beast.blocked {
+		// if we were blocked last time and can go either x or y, choose one
+		if dx != 0 && dy != 0 {
+			if rand.Intn(2) == 0 {
+				x += dx
+			} else {
+				y += dy
+			}
+		}
+	} else {
+		// we were not blocked last time
+		x += dx
+		y += dy
 	}
 	beast.SetPosition(x, y)
+	beast.blocked = false
 }
 
 func (beast *Beast) Collide(collision tl.Physical) {
 	beast.SetPosition(beast.prevX, beast.prevY)
+	beast.blocked = true
 }
 
 type Ghost struct {

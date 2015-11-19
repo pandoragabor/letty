@@ -17,25 +17,17 @@ func (gamestate *GameState) StartLevel(levelIndex int, screen *tl.Screen) {
 	gamestate.Level = gamestate.CreateLevelByIndex()
 
 	gamestate.Player = NewPlayer(gamestate.Level.StartX, gamestate.Level.StartY)
-	gamestate.Level.Level.AddEntity(gamestate.Player)
+	gamestate.Level.AddEntity(gamestate.Player)
 
-	screen.SetLevel(gamestate.Level.Level)
+	screen.SetLevel(gamestate.Level)
 
 	// animate the beasts
 	go func() {
 		for {
-			for _, beast := range TheGameState.Level.Beasts {
-				beast.Animate()
+			for _, enemy := range TheGameState.Level.Enemies {
+				enemy.Animate()
 			}
 			time.Sleep(500 * time.Millisecond)
-		}
-	}()
-	go func() {
-		for {
-			for _, beast := range TheGameState.Level.Beasts {
-				beast.Move()
-			}
-			time.Sleep(50 * time.Millisecond)
 		}
 	}()
 }

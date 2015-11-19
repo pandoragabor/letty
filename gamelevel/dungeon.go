@@ -5,9 +5,19 @@ import (
 )
 
 type Level struct {
-	Level *tl.BaseLevel
+	*tl.BaseLevel
 	StartX, StartY int
-	Beasts []Beast
+	Enemies []Enemy
+}
+
+func (l *Level) Tick(ev tl.Event) {
+	// move the enemies even if there was no event
+	for _, e := range l.Enemies {
+		e.Move()
+	}
+
+	// handle collisions, etc
+	l.BaseLevel.Tick(ev)
 }
 
 type Wall struct {
@@ -54,14 +64,14 @@ func createLevel1() (*Level) {
 	door2 := NewDoor(41, 45, 2, 5, tl.ColorRed)
 	level.AddEntity(door2)
 
-	beasts := make([]Beast, 0)
+	enemies := make([]Enemy, 0)
 	for x := 50; x < 110; x++ {
 		for y := 27; y > 17; y-- {
 			ghost := NewGhost(x, y)
 			level.AddEntity(ghost)
-			beasts = append(beasts, ghost)
+			enemies = append(enemies, ghost)
 		}
 	}
 
-	return &Level{level, 20, 20, beasts}
+	return &Level{level, 20, 20, enemies}
 }

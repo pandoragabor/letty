@@ -1,7 +1,7 @@
 package main
 
 import tl "github.com/JoelOtter/termloop"
-import "github.com/uzudil/gal/gamelevel"
+import "github.com/pandoragabor/letty/gamelevel"
 
 func main() {
 	g := tl.NewGame()

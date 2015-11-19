@@ -2,29 +2,32 @@ package gamelevel
 
 import tl "github.com/JoelOtter/termloop"
 import "math/rand"
+import "time"
 
-type Beast interface {
+type Enemy interface {
 	tl.Drawable
 	tl.DynamicPhysical
 	Animate()
 	Move()
 }
 
-type BasicBeast struct {
+type Beast struct {
 	*Pattern
 	runes []rune
 	cell tl.Cell
 	prevX, prevY int
+	lastMillis, speed int64
 }
 
-func NewBasicBeast(x, y int, color tl.Attr, runes []rune) (*BasicBeast) {
-	return &BasicBeast{NewPattern(x, y, 1, 1, color, false, runes[0]),
+func NewBeast(x, y int, color tl.Attr, runes []rune, speed int64) (*Beast) {
+	return &Beast{NewPattern(x, y, 1, 1, color, false, runes[0]),
 		runes,
 		tl.Cell{color, tl.ColorBlack, runes[0]},
-		x, y}
+		x, y,
+		0, speed}
 }
 
-func (beast *BasicBeast) Animate() {
+func (beast *Beast) Animate() {
 	ch := beast.runes[0]
 	if rand.Intn(10) > 7 {
 		ch = beast.runes[rand.Intn(len(beast.runes))]
@@ -33,7 +36,13 @@ func (beast *BasicBeast) Animate() {
 	beast.SetCell(0, 0, &beast.cell)
 }
 
-func (beast *BasicBeast) Move() {
+func (beast *Beast) Move() {
+	millis := time.Now().UnixNano() / 1000000
+	if millis - beast.lastMillis <= beast.speed {
+		return
+	}
+
+	beast.lastMillis = millis
 	toX := TheGameState.Player.prevX
 	toY := TheGameState.Player.prevY
 	beast.prevX, beast.prevY = beast.Position()
@@ -52,16 +61,15 @@ func (beast *BasicBeast) Move() {
 	beast.SetPosition(x, y)
 }
 
-func (beast *BasicBeast) Collide(collision tl.Physical) {
+func (beast *Beast) Collide(collision tl.Physical) {
 	beast.SetPosition(beast.prevX, beast.prevY)
 }
 
-
 type Ghost struct {
-	*BasicBeast
+	*Beast
 }
 
 func NewGhost(x, y int) (*Ghost) {
-	return &Ghost{NewBasicBeast(x, y, tl.ColorYellow, []rune{'o', 'O'})}
+	return &Ghost{NewBeast(x, y, tl.ColorYellow, []rune{'o', 'O'}, 100)}
 }
 

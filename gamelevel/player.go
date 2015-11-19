@@ -25,13 +25,13 @@ func (player *Player) AddKey(key *Key) {
 	} else {
 		player.keys[color] = 1
 	}
-	TheGameState.Level.Level.RemoveEntity(key)
+	TheGameState.Level.RemoveEntity(key)
 }
 
 func (player *Player) OpenDoor(door *Door) bool {
 	color := door.Color
 	if keys, ok := player.keys[color]; ok && keys > 0 {
-		TheGameState.Level.Level.RemoveEntity(door)
+		TheGameState.Level.RemoveEntity(door)
 		player.keys[color] = keys - 1
 		return true
 	}
@@ -41,7 +41,7 @@ func (player *Player) OpenDoor(door *Door) bool {
 func (player *Player) Draw(screen *tl.Screen) {
 	screenWidth, screenHeight := screen.Size()
 	x, y := player.entity.Position()
-	TheGameState.Level.Level.SetOffset(screenWidth/2-x, screenHeight/2-y)
+	TheGameState.Level.SetOffset(screenWidth/2-x, screenHeight/2-y)
 	player.entity.Draw(screen)
 }
 

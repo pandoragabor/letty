@@ -4,6 +4,7 @@ import tl "github.com/JoelOtter/termloop"
 import "math/rand"
 import (
 	"time"
+	"math"
 )
 
 type Enemy interface {
@@ -91,6 +92,15 @@ func (beast *Beast) Move() {
 		}
 	} else {
 		// we were not blocked last time
+		distance := math.Sqrt(float64((x - toX) * (x - toX) + (y - toY) * (y - toY)))
+		if distance > 2 {
+			// if far away, add some wiggle to the movement
+			if dx == 0 {
+				dx = rand.Intn(2) - 1
+			} else if dy == 0 {
+				dy = rand.Intn(2) - 1
+			}
+		}
 		x += dx
 		y += dy
 	}

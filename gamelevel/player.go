@@ -1,12 +1,16 @@
 package gamelevel
 
-import tl "github.com/JoelOtter/termloop"
+import (
+	tl "github.com/JoelOtter/termloop"
+	"time"
+)
 
 type Player struct {
     entity *tl.Entity
 	prevX  int
 	prevY  int
 	keys   map[tl.Attr]int
+	lastFireMillis int64
 }
 
 func NewPlayer(sx, sy int) (*Player) {
@@ -46,6 +50,12 @@ func (player *Player) Draw(screen *tl.Screen) {
 }
 
 func (player *Player) Fire(dx, dy int) {
+	millis := time.Now().UnixNano() / 1000000
+	if millis - player.lastFireMillis <= 300 {
+		return
+	}
+	player.lastFireMillis = millis
+
 	x, y := player.entity.Position()
 	bullet := NewBullet(x + dx, y + dy, dx, dy)
 	TheGameState.Level.AddEntity(bullet)

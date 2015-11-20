@@ -1,8 +1,8 @@
 # letty
 A remake of the classic game Gauntlet in go, running in a terminal window
-
+![alt tag](https://raw.githubusercontent.com/pandoragabor/letty/master/screen.png)
 To run the game:
-1. install go from https://golang.org/dl/
-2. in a Terminal window, run: go run letty.go
+- install go from https://golang.org/dl/
+- in a Terminal window, run: go run letty.go
 
 Enjoy!

@@ -102,8 +102,9 @@ func (player *Player) Collide(collision tl.Physical) {
 	case *Wall:
 		blocked = true
 	case *Door:
-		blocked = true
+		blocked = !player.OpenDoor(collision.(*Door))
 	case *Key:
+		player.AddKey(collision.(*Key))
 		blocked = false
 	}
 	if blocked {

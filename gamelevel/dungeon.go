@@ -10,20 +10,6 @@ type Level struct {
 	Enemies []Enemy
 }
 
-func (l *Level) Tick(ev tl.Event) {
-	// move the enemies even if there was no event
-	for _, e := range l.Enemies {
-		e.Move()
-	}
-
-	for _, b := range TheGameState.Bullets {
-		b.Move()
-	}
-
-	// handle collisions, etc
-	l.BaseLevel.Tick(ev)
-}
-
 type Wall struct {
 	*Pattern
 }

@@ -18,6 +18,11 @@ func NewBullet(x, y, dx, dy int) (*Bullet) {
 	return &Bullet{NewPattern(x, y, 1, 1, tl.ColorWhite, false, ch), dx, dy, true}
 }
 
+func (bullet *Bullet) Draw(s *tl.Screen) {
+	bullet.Move()
+	bullet.Pattern.Draw(s)
+}
+
 func (bullet *Bullet) Move() {
 	if bullet.active {
 		x, y := bullet.Position()

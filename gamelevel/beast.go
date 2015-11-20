@@ -47,6 +47,11 @@ func (beast *Beast) Animate() {
 	beast.SetCell(0, 0, &beast.cell)
 }
 
+func (beast *Beast) Draw(s *tl.Screen) {
+	beast.Move()
+	beast.Pattern.Draw(s)
+}
+
 func (beast *Beast) Move() {
 	if !beast.active {
 		return
@@ -62,22 +67,18 @@ func (beast *Beast) Move() {
 	}
 
 	// aim for the player
-	toX := TheGameState.Player.prevX
-	toY := TheGameState.Player.prevY
+	toX, toY := TheGameState.Player.Position()
 	beast.prevX, beast.prevY = beast.Position()
-	x := beast.prevX
-	y := beast.prevY
 
-	dx := 0
-	dy := 0
-	if x < toX {
+	dx, dy := 0, 0
+	if beast.prevX < toX {
 		dx = 1
-	} else if x > toX {
+	} else if beast.prevX > toX {
 		dx = -1
 	}
-	if y < toY {
+	if beast.prevY < toY {
 		dy = 1
-	} else if y > toY {
+	} else if beast.prevY > toY {
 		dy = -1
 	}
 
@@ -85,14 +86,16 @@ func (beast *Beast) Move() {
 		// if we were blocked last time and can go either x or y, choose one
 		if dx != 0 && dy != 0 {
 			if rand.Intn(2) == 0 {
-				x += dx
+				dx = 0
 			} else {
-				y += dy
+				dy = 0
 			}
 		}
 	} else {
 		// we were not blocked last time
-		distance := math.Sqrt(float64((x - toX) * (x - toX) + (y - toY) * (y - toY)))
+		distance := math.Sqrt(float64(
+			(beast.prevX - toX) * (beast.prevX - toX) +
+			(beast.prevY - toY) * (beast.prevY - toY)))
 		if distance > 2 {
 			// if far away, add some wiggle to the movement
 			if dx == 0 {
@@ -101,10 +104,10 @@ func (beast *Beast) Move() {
 				dy = rand.Intn(2) - 1
 			}
 		}
-		x += dx
-		y += dy
 	}
-	beast.SetPosition(x, y)
+	if dx != 0 || dy != 0 {
+		beast.SetPosition(beast.prevX + dx, beast.prevY + dy)
+	}
 	beast.blocked = false
 }
 

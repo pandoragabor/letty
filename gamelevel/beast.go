@@ -108,13 +108,12 @@ func (beast *Beast) Move() {
 	beast.blocked = false
 }
 
-func (beast *Beast) Collide(collision tl.Physical) {
-	if _, ok := collision.(*Bullet); ok {
-		TheGameState.Level.RemoveEntity(beast)
-		beast.active = false
-	} else {
-		beast.SetPosition(beast.prevX, beast.prevY)
-		beast.blocked = true
-	}
+func (beast *Beast) Kill() {
+	TheGameState.Level.RemoveEntity(beast)
+	beast.active = false
 }
 
+func (beast *Beast) Collide(collision tl.Physical) {
+	beast.SetPosition(beast.prevX, beast.prevY)
+	beast.blocked = true
+}

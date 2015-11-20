@@ -25,7 +25,14 @@ func (bullet *Bullet) Move() {
 	}
 }
 
-func (bullet *Bullet) Collide(collision tl.Physical) {
+func (bullet *Bullet) Kill() {
 	TheGameState.Level.RemoveEntity(bullet)
 	bullet.active = false
+}
+
+func (bullet *Bullet) Collide(collision tl.Physical) {
+	if beast, ok := collision.(*Beast); ok {
+		beast.Kill()
+	}
+	bullet.Kill()
 }

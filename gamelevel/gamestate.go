@@ -24,6 +24,10 @@ func (gamestate *GameState) StartLevel(levelIndex int, screen *tl.Screen) {
 
 	screen.SetLevel(gamestate.Level)
 
+	screen.AddEntity(gamestate.Player.Score)
+	screen.AddEntity(gamestate.Player.Level)
+	screen.AddEntity(gamestate.Player.Health)
+
 	// animate the beasts
 	go func() {
 		for {

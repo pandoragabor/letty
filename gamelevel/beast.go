@@ -12,6 +12,7 @@ type Enemy interface {
 	tl.DynamicPhysical
 	Animate()
 	Move()
+	Kill()
 }
 
 type Beast struct {
@@ -117,6 +118,14 @@ func (beast *Beast) Kill() {
 }
 
 func (beast *Beast) Collide(collision tl.Physical) {
+	if player, ok := collision.(*Player); ok {
+		player.Health.DecrementHealth()
+		beast.Kill()
+	} else if bullet, ok := collision.(*Bullet); ok {
+		TheGameState.Player.Score.IncrementScore()
+		bullet.Kill()
+		beast.Kill()
+	}
 	beast.SetPosition(beast.prevX, beast.prevY)
 	beast.blocked = true
 }

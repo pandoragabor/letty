@@ -38,6 +38,7 @@ func (bullet *Bullet) Kill() {
 func (bullet *Bullet) Collide(collision tl.Physical) {
 	if beast, ok := collision.(*Beast); ok {
 		beast.Kill()
+		TheGameState.Player.Score.IncrementScore()
 	}
 	bullet.Kill()
 }

@@ -9,6 +9,6 @@ func main() {
 
 	gamelevel.TheGameState.StartLevel(1, g.Screen())
 
-	g.Screen().AddEntity(tl.NewFpsText(0, 0, tl.ColorRed, tl.ColorDefault, 0.5))
+//	g.Screen().AddEntity(tl.NewFpsText(0, 0, tl.ColorRed, tl.ColorDefault, 0.5))
 	g.Start()
 }

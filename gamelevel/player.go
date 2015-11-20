@@ -3,7 +3,45 @@ package gamelevel
 import (
 	tl "github.com/JoelOtter/termloop"
 	"time"
+	"fmt"
 )
+
+type HealthText struct {
+	*tl.Text
+	health int
+}
+
+func NewHealthText() (*HealthText) {
+	return &HealthText{tl.NewText(40, 0, "Health: 100%", tl.ColorYellow, tl.ColorBlue), 100}
+}
+
+func (health *HealthText) DecrementHealth() {
+	health.health--
+	health.SetText(fmt.Sprintf("Health: %d%%", health.health))
+}
+
+type LevelText struct {
+	*tl.Text
+	level int
+}
+
+func NewLevelText() (*LevelText) {
+	return &LevelText{tl.NewText(20, 0, "Level: 1", tl.ColorYellow, tl.ColorBlue), 1}
+}
+
+type ScoreText struct {
+	*tl.Text
+	score int
+}
+
+func NewScoreText() (*ScoreText) {
+	return &ScoreText{tl.NewText(0, 0, "Score: 0", tl.ColorYellow, tl.ColorBlue), 0}
+}
+
+func (score *ScoreText) IncrementScore() {
+	score.score++
+	score.SetText(fmt.Sprintf("Score: %d", score.score))
+}
 
 type Player struct {
     entity *tl.Entity
@@ -11,12 +49,18 @@ type Player struct {
 	prevY  int
 	keys   map[tl.Attr]int
 	lastFireMillis int64
+	Score *ScoreText
+	Level *LevelText
+	Health *HealthText
 }
 
 func NewPlayer(sx, sy int) (*Player) {
 	player := Player{
 		entity: tl.NewEntity(sx, sy, 1, 1),
 		keys: make(map[tl.Attr]int, 100),
+		Score: NewScoreText(),
+		Level: NewLevelText(),
+		Health: NewHealthText(),
 	}
 	player.entity.SetCell(0, 0, &tl.Cell{Fg: tl.ColorRed, Ch: '옷'})
 	return &player

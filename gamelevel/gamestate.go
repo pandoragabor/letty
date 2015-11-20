@@ -8,6 +8,7 @@ type GameState struct {
 	Player *Player
 	LevelIndex int
 	Level *Level
+	Bullets []*Bullet
 }
 
 var TheGameState *GameState = new(GameState)
@@ -15,6 +16,8 @@ var TheGameState *GameState = new(GameState)
 func (gamestate *GameState) StartLevel(levelIndex int, screen *tl.Screen) {
 	gamestate.LevelIndex = levelIndex
 	gamestate.Level = gamestate.CreateLevelByIndex()
+
+	gamestate.Bullets = make([]*Bullet, 0)
 
 	gamestate.Player = NewPlayer(gamestate.Level.StartX, gamestate.Level.StartY)
 	gamestate.Level.AddEntity(gamestate.Player)

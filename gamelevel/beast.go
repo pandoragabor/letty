@@ -2,7 +2,9 @@ package gamelevel
 
 import tl "github.com/JoelOtter/termloop"
 import "math/rand"
-import "time"
+import (
+	"time"
+)
 
 type Enemy interface {
 	tl.Drawable
@@ -18,6 +20,7 @@ type Beast struct {
 	prevX, prevY int
 	lastMillis, speed int64
 	blocked bool
+	active bool
 }
 
 func NewBeast(x, y int, color tl.Attr, runes []rune, speed int64) (*Beast) {
@@ -26,10 +29,15 @@ func NewBeast(x, y int, color tl.Attr, runes []rune, speed int64) (*Beast) {
 		tl.Cell{color, tl.ColorBlack, runes[0]},
 		x, y,
 		0, speed,
-		false}
+		false,
+		true}
 }
 
 func (beast *Beast) Animate() {
+	if !beast.active {
+		return
+	}
+
 	ch := beast.runes[0]
 	if rand.Intn(10) > 7 {
 		ch = beast.runes[rand.Intn(len(beast.runes))]
@@ -39,6 +47,10 @@ func (beast *Beast) Animate() {
 }
 
 func (beast *Beast) Move() {
+	if !beast.active {
+		return
+	}
+
 	if !beast.blocked {
 		// if wasn't blocked last, time limit on the creature's speed
 		millis := time.Now().UnixNano() / 1000000
@@ -87,15 +99,12 @@ func (beast *Beast) Move() {
 }
 
 func (beast *Beast) Collide(collision tl.Physical) {
-	beast.SetPosition(beast.prevX, beast.prevY)
-	beast.blocked = true
-}
-
-type Ghost struct {
-	*Beast
-}
-
-func NewGhost(x, y int) (*Ghost) {
-	return &Ghost{NewBeast(x, y, tl.ColorYellow, []rune{'o', 'O'}, 100)}
+	if _, ok := collision.(*Bullet); ok {
+		TheGameState.Level.RemoveEntity(beast)
+		beast.active = false
+	} else {
+		beast.SetPosition(beast.prevX, beast.prevY)
+		beast.blocked = true
+	}
 }
 

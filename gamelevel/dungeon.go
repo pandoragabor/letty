@@ -16,6 +16,10 @@ func (l *Level) Tick(ev tl.Event) {
 		e.Move()
 	}
 
+	for _, b := range TheGameState.Bullets {
+		b.Move()
+	}
+
 	// handle collisions, etc
 	l.BaseLevel.Tick(ev)
 }
@@ -66,8 +70,8 @@ func createLevel1() (*Level) {
 
 	enemies := make([]Enemy, 0)
 	for x := 50; x < 110; x++ {
-		for y := 27; y > 17; y-- {
-			ghost := NewGhost(x, y)
+		for y := 27; y > 22; y-- {
+			ghost := NewBeast(x, y, tl.ColorYellow, []rune{'o', 'O'}, 250)
 			level.AddEntity(ghost)
 			enemies = append(enemies, ghost)
 		}

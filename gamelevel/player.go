@@ -45,6 +45,13 @@ func (player *Player) Draw(screen *tl.Screen) {
 	player.entity.Draw(screen)
 }
 
+func (player *Player) Fire(dx, dy int) {
+	x, y := player.entity.Position()
+	bullet := NewBullet(x + dx, y + dy, dx, dy)
+	TheGameState.Level.AddEntity(bullet)
+	TheGameState.Bullets = append(TheGameState.Bullets, bullet)
+}
+
 func (player *Player) Tick(event tl.Event) {
 	if event.Type == tl.EventKey { // Is it a keyboard event?
 		player.prevX, player.prevY = player.entity.Position()
@@ -62,6 +69,12 @@ func (player *Player) Tick(event tl.Event) {
 			player.entity.SetPosition(player.prevX, player.prevY+1)
 			break
      	}
+		switch event.Ch {
+			case 'a': player.Fire(-1, 0)
+			case 'd': player.Fire(1, 0)
+			case 'w': player.Fire(0, -1)
+			case 's': player.Fire(0, 1)
+		}
 	}
 }
 
